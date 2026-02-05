@@ -3,8 +3,75 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## [0.4.0] - TBD
 
-## [Unreleased]
+### Added
+- CRUD для типів кешбеку (cashback operation types) в адмінці
+- Автоматичну ініціалізацію nv-ключів у Vault при першому запуску
+- Імпорт та експорт списку терміналів для кешбеку по мерчанту
+- Розділ для завантаження транзакцій в адмінці
+- Розділ налаштувань в адмінці з можливістю:
+  - оновлювати LDAP-підключення та мапери ролей
+  - менеджити вручну створених користувачів
+  - змінювати доступи на редагування минулих періодів кешбеків
+  - налаштовувати вебхуки
+  - додавати нові access keys для Mobile Gateway (авторизація)
+  - змінювати налаштування бази даних (не рекомендується після стартового сетапу)
+  - додавати нові джерела даних (наприклад, підвантаження транзакцій з Kafka)
+
+### Changed
+- Роути мапінга вебхуків із перенесенням полів у subscriptions
+- Валідацію поля "Опис" у мерчантах: дозволені всі спецсимволи
+
+### Fixed
+- 500 при додаванні персональних кешбеків через бекенд
+- Некоректний logout і відсутність редіректу на сторінку авторизації
+- Відображення полів % оплати у дефолтних кешбеках при помилках валідації
+- LDAP: відсутність групи в Keycloak і недоступність перевірки конекту при оновленні
+- Відсутність транзакцій в аналітиці користувача та помилки імпорту транзакцій
+- Помилку імпорту терміналів
+- Некоректний endDate при створенні кешбеку
+
+## [0.3.0] - 2026-02-03
+
+### Added
+- Vault інтеграцію з середовищами, сервісами, імпортом секретів і документацією
+- Діплоялті інтеграція - підвантажуємо мерчантів, термінали та кешбек програми
+- Kafka бібліотеку, менеджер з'єднань і керування консюмерами
+- Модулі DataSources та DataSourceMappers з CRUD, тестовими ендпоінтами та schema analyzer
+- Повний стек Webhooks: підписки, мапери, події, delivery logs і payload шаблони
+- Конфігураційний модуль Keycloak з LDAP-ендпоінтами, групами/ролями та статистикою
+- MinIO модуль і скрипти ініціалізації buckets/policies
+- Mobile access keys модуль і ендпоінти
+
+### Changed
+- CI/CD пайплайни та GitHub Actions для збірки/публікації образів з тегом версії
+- Dockerfile та docker-compose для локальних і prod оточень, nginx/filebeat конфіги
+- Динамічну БД: TS seeds, нові міграції, bulk-json-save і SQL-хелпери
+- [DB] Оновлення схеми та міграцій (таблиці/колонки/індекси):
+  - Нові таблиці:
+    - `DATA_SOURCES`
+    - `DATA_SOURCE_MAPPERS`
+  - `TRANSACTIONS`:
+    - додано колонку `DATA_SOURCE_ID` (звʼязок з `DATA_SOURCES`)
+  - `CUSTOMER`:
+    - додано колонку `ADDED_BONUSES` (decimal, default 0)
+  - `RECEIPTS`:
+    - видалено retry-колонки: `RETRY_ATTEMPTS`, `NEXT_RETRY_AT`, `RETRY_ERROR_MESSAGE`, `RETRY_STATUS`
+    - видалено індекс `IDX_RECEIPTS_RETRY_STATUS_NEXT_RETRY` (по `RETRY_STATUS`, `NEXT_RETRY_AT`)
+  - Webhooks (схема таблиць):
+    - `WEBHOOK_SUBSCRIPTIONS`: додано поля авторизації/доставки (`HTTP_METHOD`, `USE_AUTHORIZATION`, `AUTH_TYPE`, `AUTH_API_KEY`, `AUTH_LOCATION`, `AUTH_FIELD_NAME`)
+    - `WEBHOOK_SUBSCRIPTIONS`: додано унікальний індекс `IDX_WEBHOOK_SUBSCRIPTIONS_CALLBACK_URL` (по `CALLBACK_URL`)
+    - `WEBHOOK_MAPPERS`: видалено колонки `AUTHORIZATION_TYPE`, `HTTP_METHOD` (перенесено в `WEBHOOK_SUBSCRIPTIONS`)
+    - `WEBHOOK_EVENTS`: `DESCRIPTION` → `DESCRIPTION_EN` + додано `NAME_EN`, `NAME_UA`, `DESCRIPTION_UA` (multilang)
+  - Міграції:
+    - багато старих міграцій видалено/консолідовано, додані нові точкові міграції для змін вище
+- Логування й обробку помилок у ключових сервісах (централізовані хендлери)
+- Обробку транзакцій і кешбеків: SQL-операції, batch/parallel, гнучкі дати
+- Конфігурації Keycloak/Redis/Deeployalty та структуру vault paths для середовищ
+
+### Fixed
+- Надійність ініціалізації та логування під час підключень до БД/Redis/Kafka
 
 ## [0.2.0] - 2025-12-03
 
