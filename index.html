@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Changelog</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         body {
@@ -45,7 +46,7 @@
         }
         ul { padding-left: 2em; }
         li { margin-bottom: 0.25em; }
-        
+
         /* Loading state */
         #content:empty::before {
             content: "Loading changelog...";
@@ -61,7 +62,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const contentDiv = document.getElementById('content');
-            
+
             // Fetch the CHANGELOG.md file
             fetch('CHANGELOG.md')
                 .then(response => {
@@ -73,7 +74,7 @@
                 .then(text => {
                     // Configure marked options if needed
                     // marked.use({ ... });
-                    
+
                     // Render markdown to HTML
                     contentDiv.innerHTML = marked.parse(text);
                 })
