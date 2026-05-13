@@ -1,16 +1,14 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
-
-## [0.7.0] - 2026-05-11
+## [0.7.2] - 2026-05-11
 
 ### Added
 
 - Можливість видалити файл терміналів мерчанта в кешбеці при редагуванні
 - Можливість повторної обробки транзакцій через розділ «Мерчанти»: кнопка «Перерахувати кешбек» у блоці редагування терміналів активується при додаванні нових терміналів
 - Логіка автоматичного перерахунку транзакцій за поточний місяць при додаванні нових терміналів до мерчанта
+
+![Демонстрація перерахунку кешбеку по мерчанту](images/changelog/recount-cashback.gif)
 
 ### Changed
 
@@ -22,7 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Змінено назву блоку «Додати вручну» на «Додати термінали вручну» у формі мерчанта
 - Кнопка «Перерахувати кешбек» тепер активна для нових мерчантів (без прив'язки до активного кешбеку)
 
-  [Документація по зміні роботи з мерчантами](/docs/full-instruction-reward-platform/#мерчанти)
+  [Документація по зміні роботи з мерчантами](/full-instruction-reward-platform/#мерчанти)
 ### Fixed
 
 - Після закінчення таймауту сесії відображалась сторінка Unauthorized Access замість сторінки логіну
@@ -250,9 +248,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Роути мапінга вебхуків із перенесенням полів у subscriptions
 - Валідацію поля "Опис" у мерчантах: дозволені всі спецсимволи
 - Видалено deprecated ендпоінти:
-  - `GET /customer-cashback/chosen/:id` 
+  - `GET /customer-cashback/chosen/:id`
   - `GET /settings`
-  - `GET /allowed-cashbacks/positions` 
+  - `GET /allowed-cashbacks/positions`
   - `GET /receipt/transaction/:id`
 - Персональний кешбек тепер повністю перекриває дефолтний (раніше відбувався merge дозволених позицій)
 - Поле `accountId` в `POST /cashback-histories/withdraw` стало опціональним (раніше було обов'язковим)
