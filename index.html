@@ -110,21 +110,29 @@
         }
         #lightbox-close:hover { background: rgba(255,255,255,0.25); }
 
-        #theme-toggle {
+        #controls {
             position: fixed;
             top: 16px;
             right: 16px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        #theme-toggle, #lang-select {
             background: var(--btn-bg);
             border: 1px solid var(--btn-border);
             color: var(--btn-text);
             border-radius: 6px;
             padding: 6px 10px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             line-height: 1;
             transition: background-color 0.2s, border-color 0.2s;
+            appearance: none;
+            -webkit-appearance: none;
         }
-        #theme-toggle:hover { opacity: 0.8; }
+        #theme-toggle:hover, #lang-select:hover { opacity: 0.8; }
+        #lang-select:focus { outline: 2px solid var(--link); outline-offset: 2px; }
 
         #content:empty::before {
             content: "Loading changelog...";
@@ -133,7 +141,13 @@
     </style>
 </head>
 <body>
-    <button id="theme-toggle" title="Toggle dark mode">🌙</button>
+    <div id="controls">
+        <select id="lang-select" title="Select language" aria-label="Select language">
+            <option value="uk">🇺🇦 UA</option>
+            <option value="en">🇬🇧 EN</option>
+        </select>
+        <button id="theme-toggle" title="Toggle dark mode">🌙</button>
+    </div>
     <div id="lightbox">
         <span id="lightbox-close" title="Close">✕</span>
         <img id="lightbox-img" src="" alt="">
@@ -143,23 +157,36 @@
     </div>
 
     <script>
-        const btn = document.getElementById('theme-toggle');
+        const themeBtn = document.getElementById('theme-toggle');
         const root = document.documentElement;
 
-        const saved = localStorage.getItem('theme') ||
+        // Theme
+        const savedTheme = localStorage.getItem('theme') ||
             (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        applyTheme(saved);
+        applyTheme(savedTheme);
 
-        btn.addEventListener('click', () => {
+        themeBtn.addEventListener('click', () => {
             applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
         });
 
         function applyTheme(theme) {
             root.dataset.theme = theme;
-            btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+            themeBtn.textContent = theme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
             localStorage.setItem('theme', theme);
         }
 
+        // Language
+        const langSelect = document.getElementById('lang-select');
+        let currentLang = localStorage.getItem('changelog-lang') || 'uk';
+        langSelect.value = currentLang;
+
+        langSelect.addEventListener('change', () => {
+            currentLang = langSelect.value;
+            localStorage.setItem('changelog-lang', currentLang);
+            loadChangelog(currentLang);
+        });
+
+        // Lightbox
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
 
@@ -180,11 +207,13 @@
         document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function loadChangelog(lang) {
             const contentDiv = document.getElementById('content');
-            fetch('CHANGELOG.md')
+            const file = lang === 'en' ? 'CHANGELOG.en.md' : 'CHANGELOG.md';
+            contentDiv.textContent = '';
+            fetch(file)
                 .then(response => {
-                    if (!response.ok) throw new Error('Failed to load CHANGELOG.md');
+                    if (!response.ok) throw new Error('Failed to load ' + file);
                     return response.text();
                 })
                 .then(text => {
@@ -194,10 +223,18 @@
                     });
                 })
                 .catch(error => {
-                    contentDiv.innerHTML = `<p style="color: #cf222e;">Error loading changelog: ${error.message}</p>
-                                          <p>Make sure <code>CHANGELOG.md</code> exists in the same directory.</p>`;
+                    const p1 = document.createElement('p');
+                    p1.style.color = '#cf222e';
+                    p1.textContent = 'Error loading changelog: ' + error.message;
+                    const p2 = document.createElement('p');
+                    p2.textContent = 'Make sure ' + file + ' exists in the same directory.';
+                    contentDiv.textContent = '';
+                    contentDiv.appendChild(p1);
+                    contentDiv.appendChild(p2);
                 });
-        });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => loadChangelog(currentLang));
     </script>
 </body>
 </html>
