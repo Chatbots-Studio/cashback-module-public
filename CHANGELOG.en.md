@@ -166,7 +166,7 @@
 - 500 error when withdrawing funds for "Clearing House" client
 - Authorization error on Oschadbank server (dev)
 - Database connection error (dev Oschadbank)
-- Co-branded cashback accrual occurred without considering card type
+- Co-branded cashback accrual did not account for card type
 - Active co-branded cashback for current month available for editing
 - No ability to disable currency conversion on initial system setup
 - "Save" button was active even without changes in currency API settings
@@ -185,13 +185,13 @@
 ## [0.5.0] - 2026-02-26
 
 ### Added
-- Time zone configuration for correct transaction processing
+- Timezone settings for correct transaction processing
 - Added DB_ENCRYPT & DB_TRUST_SERVER_CERTIFICATE settings for MSSQL connection
 - Integration of documentation link in admin interface
 - Support for MD format in merchant "Description" field and delivery of value to API
 - Kafka Enrichment Microservice: integration with Client API, transaction enrichment, message consumption from Kafka
 - MapperCheckService for DataSourceMapper validation before Kafka operations
-- Paginated endpoint for cashback history with date filters
+- Paginated cashback history endpoint with date filters
 - TRANSACTION_FAILURES table and workflow for failed transactions
 - GroupCashbackHistoryItemResponse for simplified cashback history in transaction details
 - maxAmount at merchant level
@@ -224,7 +224,7 @@
 - Error adding merchant to current default cashback if it contained Deeployalty merchant
 - Incorrectly accrued cashback by merchant
 - Personal cashback creation
-- Deeployalty time zone
+- Deeployalty timezone
 
 ## [0.4.0] - 2026-02-12
 
@@ -276,7 +276,7 @@
 - Mobile access keys module and endpoints
 
 ### Changed
-- CI/CD pipelines and GitHub Actions for building/publishing images with version tag
+- CI/CD pipelines and GitHub Actions for image building/publishing with version tag
 - Dockerfile and docker-compose for local and prod environments, nginx/filebeat configs
 - Dynamic DB: TS seeds, new migrations, bulk-json-save and SQL helpers
 - [DB] Schema and migration updates (tables/columns/indexes):
@@ -289,17 +289,17 @@
     - added `ADDED_BONUSES` column (decimal, default 0)
   - `RECEIPTS`:
     - removed retry columns: `RETRY_ATTEMPTS`, `NEXT_RETRY_AT`, `RETRY_ERROR_MESSAGE`, `RETRY_STATUS`
-    - removed index `IDX_RECEIPTS_RETRY_STATUS_NEXT_RETRY` (on `RETRY_STATUS`, `NEXT_RETRY_AT`)
+    - removed index `IDX_RECEIPTS_RETRY_STATUS_NEXT_RETRY` (by `RETRY_STATUS`, `NEXT_RETRY_AT`)
   - Webhooks (table schema):
     - `WEBHOOK_SUBSCRIPTIONS`: added authorization/delivery fields (`HTTP_METHOD`, `USE_AUTHORIZATION`, `AUTH_TYPE`, `AUTH_API_KEY`, `AUTH_LOCATION`, `AUTH_FIELD_NAME`)
     - `WEBHOOK_SUBSCRIPTIONS`: added unique index `IDX_WEBHOOK_SUBSCRIPTIONS_CALLBACK_URL` (on `CALLBACK_URL`)
     - `WEBHOOK_MAPPERS`: removed columns `AUTHORIZATION_TYPE`, `HTTP_METHOD` (moved to `WEBHOOK_SUBSCRIPTIONS`)
     - `WEBHOOK_EVENTS`: `DESCRIPTION` → `DESCRIPTION_EN` + added `NAME_EN`, `NAME_UA`, `DESCRIPTION_UA` (multilang)
   - Migrations:
-    - many old migrations removed/consolidated, new targeted migrations added for changes above
+    - many old migrations removed/consolidated, new point migrations added for changes above
 - Logging and error handling in key services (centralized handlers)
 - Transaction and cashback processing: SQL operations, batch/parallel, flexible dates
-- Keycloak/Redis/Deeployalty configurations and vault paths structure for environments
+- Keycloak/Redis/Deeployalty configurations and vault path structure for environments
 
 ### Fixed
 - Reliability of initialization and logging during DB/Redis/Kafka connections
